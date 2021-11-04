@@ -1,8 +1,13 @@
+from pathlib import Path
+CURR_DIR = Path(__file__).resolve().parent
+
+
 # the folder name that will be created on server
 host_name = "test-server"
-local_dir = "/home/toybrick/lamp_sample"
+local_dir = Path.joinpath(CURR_DIR, "data")
 # server address
-server_addr = "192.168.0.134"
+server_addr = "127.0.0.1"
+server_port = 2222
 username = "user"
 password = "12345"
 # existing policy

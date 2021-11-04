@@ -4,7 +4,13 @@ CURR_DIR = Path(__file__).resolve().parent
 
 # the folder name that will be created on server
 host_name = "test-server"
+# local directory to upload
 local_dir = Path.joinpath(CURR_DIR, "data")
+# local_dir = "/home/toybrick/lamp_sample"
+
+# server directory for store
+server_dir = "out"
+
 # server address
 server_addr = "127.0.0.1"
 server_port = 2222

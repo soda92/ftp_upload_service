@@ -1,10 +1,6 @@
-# %%
 import config
 from ftplib import FTP
-ftp = FTP(source_address=(config.server_addr, config.server_port))
-
-# %%
-ftp.login(user=config.username, passwd=config.password)
-
-
-# %%
+with FTP() as ftp:
+    ftp.connect(host=config.server_addr,port=config.server_port)
+    ftp.login(user=config.username, passwd=config.password)
+    print(ftp.retrlines("LIST"))

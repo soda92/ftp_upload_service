@@ -1,7 +1,10 @@
 import config
 from ftplib import FTP
 
-# l = []
+
+def is_dir_exist(ftp, dir):
+    pass
+    # l = []
 
 
 def f(arr: list):

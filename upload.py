@@ -3,6 +3,7 @@ import config
 from pathlib import Path
 from ftplib import FTP
 import logging
+import time
 
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
@@ -53,4 +54,8 @@ def upload():
 
 
 if __name__ == '__main__':
+    start = time.time()
     upload()
+    end = time.time()
+    cost = (end-start)/60
+    logging.info(f"total transfer time: {cost:.2f}min")

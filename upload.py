@@ -47,9 +47,13 @@ def upload():
     # ftp.debug(level=2)
     ftp.connect(host=config.server_addr, port=config.server_port)
     ftp.login(user=config.username, passwd=config.password)
-    CURR = Path(__file__).resolve().parent
-    DATA = Path.joinpath(CURR, "local-data")
-    transfer_folder(DATA, Path('/'+config.host_name), ftp)
+    DATA = config.local_folder
+    for p in reversed(list(config.server_folder.parents)):
+        try:
+            ftp.cwd(str(p))
+        except:
+            ftp.mkd(str(p))
+    transfer_folder(DATA, config.server_folder, ftp)
     ftp.close()
 
 

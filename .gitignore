@@ -132,4 +132,4 @@ dmypy.json
 .pyre/
 *.pyc
 
-/server-data/test-server
+/data-server/upload

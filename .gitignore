@@ -133,3 +133,4 @@ dmypy.json
 *.pyc
 
 /data-server/upload
+/data-server/Data

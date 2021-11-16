@@ -1,5 +1,9 @@
-*config.py
+config.json
+config*.py
 out
+
+data-local/lamp_sample
+data-local/other
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

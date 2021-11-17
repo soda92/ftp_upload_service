@@ -1,6 +1,7 @@
 config.json
 config*.py
 out
+log.txt
 
 data-local/lamp_sample
 data-local/other

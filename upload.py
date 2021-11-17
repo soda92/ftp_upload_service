@@ -1,3 +1,5 @@
+import datetime
+import threading
 import json
 import logging
 import os
@@ -9,8 +11,8 @@ from pathlib import Path
 import config
 from create_example_config import create_example_config
 
-logging.basicConfig(level=logging.INFO,
-                    format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
+logging.basicConfig(level=logging.INFO, filename="log.txt",
+                    format='%(asctime)s %(levelname)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
 
 
 def f(arr: list):
@@ -104,6 +106,26 @@ def upload_using_config(config):
     return cost
 
 
+# 锁
+l = threading.Lock()
+
+config = ""
+
+
+def do_upload():
+    global l, config
+    if l.acquire(False):
+        logging.info("starting..")
+        cost = upload_using_config(config)
+        logging.info("finished")
+        l.release()
+        return cost
+    else:
+        logging.warning("trying to start but task still running")
+
+
+check_period = datetime.timedelta(seconds=1)
+
 if __name__ == "__main__":
     HOME = Path(sys.argv[0]).resolve().parent
     CONFIG = Path.joinpath(HOME, "config.json")
@@ -111,9 +133,39 @@ if __name__ == "__main__":
         logging.info("creating example config")
         create_example_config()
         sys.exit(0)
-    config = ""
+
     with open(str(CONFIG), encoding="utf8", mode="r") as f:
         config = json.load(f)
 
-    cost = upload_using_config(config)
-    logging.info(f"total transfer time: {cost:.2f}min")
+    now = datetime.datetime.now()
+    # 开始和结束
+    # start = datetime.datetime(year=now.year, month=now.month,
+    #                           day=now.day, hour=16, minute=23)
+    # end = datetime.datetime(year=now.year, month=now.month,
+    #                         day=now.day, hour=16, minute=25)
+
+    start = now
+    end = now + datetime.timedelta(minutes=10)
+
+    total = end-start
+    # 执行间隔
+    delta = datetime.timedelta(seconds=10)
+    times = total//delta
+
+    runs = []
+    for i in range(times):
+        runs.append(delta*i+start)
+
+    def time_in_runs(t):
+        for i in runs:
+            if i <= t < i+check_period:
+                return True
+        return False
+
+    while True:
+        now = datetime.datetime.now()
+        if(time_in_runs(now)):
+            t = threading.Thread(target=do_upload, daemon=True)
+            t.start()
+
+        time.sleep(check_period.seconds)

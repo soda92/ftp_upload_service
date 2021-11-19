@@ -75,7 +75,7 @@ def upload_using_config(config: Config) -> float:
     for path in config.paths:
         l = path.split(":")
         if len(l) == 3:
-            src = ''.join(l[0], l[1])
+            src = ':'.join(l[0:2])
             dest = l[2]
         else:
             src = l[0]
@@ -88,5 +88,7 @@ def upload_using_config(config: Config) -> float:
 
     ftp.close()
     end = time.time()
-    cost = (end-start)/60
+    cost = end-start
+    # minutes
+    cost = cost/60
     return cost

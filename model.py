@@ -15,10 +15,11 @@ class Server:
 
 class Config:
 
-    def __init__(self, server, paths, schedules) -> None:
+    def __init__(self, server, paths, schedules, debug) -> None:
         self.server = Server(**server)
         self.paths = paths
         self.schedules = schedules
+        self.debug = debug
 
     def __json__(self):
         return self.__dict__

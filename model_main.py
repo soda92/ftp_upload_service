@@ -8,7 +8,7 @@ import model_upload
 from model_timer import check_time
 
 logging.basicConfig(level=logging.INFO, filename="log.txt",
-                    format='%(asctime)s %(levelname)s %(message)s', 
+                    format='%(asctime)s %(levelname)s %(message)s',
                     datefmt='%m/%d/%Y %I:%M:%S %p')
 
 
@@ -23,7 +23,7 @@ def do_upload():
     if lock.acquire(False):
         logging.info("starting..")
         cost = model_upload.upload_using_config(config=config)
-        logging.info(f"finished, time elasped: {cost:.2f} sec")
+        logging.info(f"finished, time elasped: {cost:.2f} min")
         lock.release()
     else:
         logging.warning("trying to start but task still running")
@@ -38,6 +38,10 @@ if __name__ == "__main__":
         sys.exit(0)
 
     config = model_rw.read_conf()
+
+    if config.debug:
+        do_upload()
+        sys.exit(0)
 
     while True:
         now = datetime.datetime.now()

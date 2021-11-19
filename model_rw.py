@@ -24,14 +24,15 @@ def create_example():
     config = Config(server=server1.__json__(),
                     paths=[
                         "D:/src/ftp_upload_service/data-local/lamp_sample:/host1/lamp"],
-                    schedules="3:00,3:30,4:00,4:30,5:00")
+                    schedules="3:00,3:30,4:00,4:30,5:00",
+                    debug=True)
 
     with open("model-config.json", mode='w') as f:
         json.dump(obj=config, fp=f, indent=4)
 
 
 def exists():
-    p = Path(sys.argv[0])
+    p = Path(sys.argv[0]).parent
     file = p.joinpath("model-config.json")
     return file.is_file()
 

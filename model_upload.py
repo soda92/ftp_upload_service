@@ -41,6 +41,8 @@ def transfer_folder(srcfolder: str, ftp: FTP):
 
 def ensure_path(server_path: str, ftp: FTP):
     old_cwd = ftp.pwd()
+    if(server_path.startswith('/')):
+        server_path = server_path[1:]
     arr = server_path.split('/')
     for i in range(1, len(arr)+1):
         subpath = '/'.join(arr[0:i])
@@ -49,7 +51,7 @@ def ensure_path(server_path: str, ftp: FTP):
         except:
             logging.info(f"creating directory: {str(subpath)}")
             ftp.mkd(subpath)
-    ftp.cwd(old_cwd)
+        ftp.cwd(old_cwd)
 
 
 def upload_using_config(config: Config) -> float:

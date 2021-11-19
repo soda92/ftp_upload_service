@@ -40,6 +40,7 @@ if __name__ == "__main__":
     config = model_rw.read_conf()
 
     if config.debug:
+        breakpoint()
         do_upload()
         sys.exit(0)
 

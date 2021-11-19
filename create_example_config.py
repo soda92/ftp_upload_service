@@ -23,7 +23,21 @@ def create_example_config():
                 "src": "code/lamp_detect",
                 "dst": "code_lamp_detect"
             },
-        ]
+        ],
+        "schedule": {
+            "start": {
+                "hour": 3,
+                "minute": 0,
+            },
+            "end": {
+                "hour": 5,
+                "minute": 0
+            },
+            "delta": {
+                "hour": 0,
+                "minute": 30
+            }
+        }
     }
 
     # s = json.dumps(sample_config)

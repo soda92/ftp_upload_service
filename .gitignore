@@ -3,8 +3,8 @@ config*.py
 out
 log.txt
 
-data-local/lamp_sample
-data-local/other
+data-local
+data-server
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -137,5 +137,3 @@ dmypy.json
 .pyre/
 *.pyc
 
-/data-server/upload
-/data-server/Data

@@ -1,6 +1,5 @@
 import click
 import threading
-import config
 # https://pypi.org/project/pyftpdlib/
 from pyftpdlib.authorizers import DummyAuthorizer
 from pyftpdlib.handlers import FTPHandler
@@ -8,12 +7,11 @@ from pyftpdlib.servers import FTPServer
 
 server: FTPServer
 
-
 def start_server():
     global server
     authorizer = DummyAuthorizer()
-    authorizer.add_user(config.username, config.password,
-                        "data-server", perm="elradfmwMT")
+    authorizer.add_user("user", "12345",
+                        ".", perm="elradfmwMT")
     handler = FTPHandler
     # https://pyftpdlib.readthedocs.io/en/latest/api.html#pyftpdlib.handlers.FTPHandler.passive_ports
     handler.passive_ports = range(60000, 60010)
@@ -21,7 +19,7 @@ def start_server():
 
     # https://pyftpdlib.readthedocs.io/en/latest/api.html#pyftpdlib.servers.FTPServer
     server = FTPServer(
-        (config.server_addr_server, config.server_port), handler)
+        ('0.0.0.0', 2222), handler)
     server.serve_forever()
 
 

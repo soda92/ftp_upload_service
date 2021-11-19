@@ -1,4 +1,8 @@
+wheel
 pyftpdlib
 pytest
 autopep8
 ipython
+click
+pyinstaller
+pyftpsync

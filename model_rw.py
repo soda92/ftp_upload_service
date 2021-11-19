@@ -1,8 +1,8 @@
 import sys
+import os
 import json
 from model import Server, Config
 from json import JSONEncoder
-from pathlib import Path
 
 # https://stackoverflow.com/a/68926979/12291425
 
@@ -19,7 +19,7 @@ JSONEncoder.default = wrapped_default
 
 
 def create_example():
-    server1 = Server(name="L1", host="127.0.0.1", port=2222,
+    server1 = Server(name="L1", host="127.0.0.1", port=21,
                      user="user", passwd="12345")
     config = Config(server=server1.__json__(),
                     paths=[
@@ -32,9 +32,9 @@ def create_example():
 
 
 def exists():
-    p = Path(sys.argv[0]).parent
-    file = p.joinpath("model-config.json")
-    return file.is_file()
+    p = os.path.dirname(sys.argv[0])
+    file = os.path.join(p, "model-config.json")
+    return os.path.isfile(file)
 
 
 def read_conf():

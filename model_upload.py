@@ -2,65 +2,54 @@ import logging
 import os
 import time
 from ftplib import FTP
-from pathlib import Path
-
 from model import Config
 
 
-def transfer_file(srcfile: Path, destfile: Path, ftp: FTP):
-    ftp.cwd(str(destfile.parent))
-    # logging.info(f"transfering file: {str(destfile)}")
-    size_local = os.path.getsize(str(srcfile))
+def transfer_file_samedir(srcfile: str, ftp: FTP):
+    size_local = os.path.getsize(srcfile)
+    filename = os.path.basename(srcfile)
     try:
-        size_remote = ftp.size(destfile.name)
+        size_remote = ftp.size(filename)
     except:
-        # size not allowed in ASCII mode
-        ftp.voidcmd('TYPE I')
+        size_remote = -1
+    if size_local != size_remote:
+        with open(str(srcfile), mode='rb') as fp:
+            ftp.storbinary(cmd=f"STOR {filename}", fp=fp)
+
+
+def transfer_folder(srcfolder: str, ftp: FTP):
+    item_list = os.listdir(srcfolder)
+    file_list = sorted(
+        list(filter(lambda x: os.path.isfile(os.path.join(srcfolder, x)), item_list)))
+    folder_list = sorted(
+        list(filter(lambda x: os.path.isdir(os.path.join(srcfolder, x)), item_list)))
+
+    for i, file in enumerate(file_list):
+        logging.info(f"uploading {i+1} of {len(file_list)}: {file}")
+        transfer_file_samedir(os.path.join(srcfolder, file), ftp)
+
+    for i, folder in enumerate(folder_list):
         try:
-            size_remote = ftp.size(destfile.name)
+            ftp.cwd(folder)
         except:
-            with open(str(srcfile), mode='rb') as fp:
-                ftp.storbinary(cmd=f"STOR {srcfile.name}", fp=fp)
-            return
-    if size_local == size_remote:
-        return
-    with open(str(srcfile), mode='rb') as fp:
-        ftp.storbinary(cmd=f"STOR {srcfile.name}", fp=fp)
+            ftp.mkd(folder)
+            ftp.cwd(folder)
+        newsrc = os.path.join(srcfolder, folder)
+        transfer_folder(newsrc, ftp)
+        ftp.cwd("..")
 
 
-def transfer_folder(srcfolder: Path, destfolder: Path, ftp: FTP):
-    p: Path = srcfolder
-    try:
-        ftp.cwd(str(destfolder))
-    except:
-        logging.info(f"creating directory: {str(destfolder)}")
-        ftp.mkd(str(destfolder))
-
-    item_list = sorted(os.listdir(str(srcfolder)))
-    len_ = len(item_list)
-    for i in range(len(item_list)):
-        item = item_list[i]
-        x = p.joinpath(item)
-        df = destfolder.joinpath(x.name)
-        if x.is_dir():
-            transfer_folder(x, df, ftp)
-        elif x.is_file():
-            logging.info(f"uploading {i+1} of {len_}: {str(item)}")
-            transfer_file(x, df, ftp)
-
-
-def ensure_path(server_path: Path, ftp: FTP):
-    for p in reversed(list(server_path.parents)):
+def ensure_path(server_path: str, ftp: FTP):
+    old_cwd = ftp.pwd()
+    arr = server_path.split('/')
+    for i in range(1, len(arr)+1):
+        subpath = '/'.join(arr[0:i])
         try:
-            ftp.cwd(str(p))
+            ftp.cwd(subpath)
         except:
-            logging.info(f"creating directory: {str(p)}")
-            ftp.mkd(str(p))
-    try:
-        ftp.cwd(str(server_path))
-    except:
-        logging.info(f"creating directory: {str(server_path)}")
-        ftp.mkd(str(server_path))
+            logging.info(f"creating directory: {str(subpath)}")
+            ftp.mkd(subpath)
+    ftp.cwd(old_cwd)
 
 
 def upload_using_config(config: Config) -> float:
@@ -80,11 +69,10 @@ def upload_using_config(config: Config) -> float:
         else:
             src = l[0]
             dest = l[1]
-
-        src = Path(src)
-        dest = Path(dest)
         ensure_path(dest, ftp)
-        transfer_folder(src, dest, ftp)
+        ftp.cwd(dest)
+        ftp.voidcmd('TYPE I')
+        transfer_folder(src, ftp)
 
     ftp.close()
     end = time.time()

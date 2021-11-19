@@ -1,0 +1,12 @@
+version: '3.1'
+
+services:
+  vsftpd:
+    image: fauria/vsftpd
+    environment:
+      - FTP_USER=user
+      - FTP_PASS=12345
+    ports:
+      - 21:21
+    volumes:
+      - ./data-local:/home/vsftpd

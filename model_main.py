@@ -7,7 +7,7 @@ import time
 import model_upload
 from model_timer import check_time
 
-logging.basicConfig(level=logging.INFO, filename="log.txt",
+logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(levelname)s %(message)s',
                     datefmt='%m/%d/%Y %I:%M:%S %p')
 

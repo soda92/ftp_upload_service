@@ -140,3 +140,11 @@ dmypy.json
 
 # secret
 secret-*
+
+# release
+ftp_upload
+*.zip
+*.7z
+
+# pandoc
+*.html

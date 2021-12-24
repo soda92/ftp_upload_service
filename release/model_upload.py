@@ -13,8 +13,15 @@ def transfer_file_samedir(srcfile: str, ftp: FTP):
     except:
         size_remote = -1
     if size_local != size_remote:
-        with open(str(srcfile), mode='rb') as fp:
-            ftp.storbinary(cmd=f"STOR {filename}", fp=fp)
+        if size_remote == -1 or size_local < size_remote:
+            with open(str(srcfile), mode='rb') as fp:
+                ftp.storbinary(cmd=f"STOR {filename}", fp=fp)
+        else:
+            with open(str(srcfile), mode='rb') as fp:
+                logging.info(
+                    f"continuing transfer file {srcfile} at {size_remote}")
+                fp.seek(size_remote)
+                ftp.storbinary(cmd=f"STOR {filename}", fp=fp, rest=size_remote)
 
 
 def transfer_folder(srcfolder: str, ftp: FTP):

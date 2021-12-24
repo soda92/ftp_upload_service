@@ -148,3 +148,6 @@ ftp_upload
 
 # pandoc
 *.html
+
+# config
+config.*.json
